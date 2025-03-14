@@ -12,27 +12,35 @@ class AlienInvasion:
 
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.width, self.settings.height))
+        self.screen_rect = self.screen.get_rect()
         self.clock = pygame.time.Clock()
         self.ship = Ship(self)
-        self.bg_color = self.settings.bg_color
+        self.bg_image = self.settings.bg_image
+        self.bg_rect = self.bg_image.get_rect()
+        self.bg_rect.center = self.screen_rect.center
         pygame.display.set_caption("Alien Invasion")
 
     def run_game(self):
         """Start the main loop for the game."""
         while True:
-            # Watch for keyboard and mouse events.
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-            
-            # Sets the color of the background
-            self.screen.fill(self.bg_color)
-            self.ship.blit_me()
-            # Make the most recently drawn screen visible.
-            pygame.display.flip()
-            # Ensure that the loop will run in a time that make the frame rate 60 fps
+            self.check_events()
+            self.update_screen()
             self.clock.tick(60)
+    
+    def check_events(self):
+        """Respond to keypresses and mouse events"""
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+    
+    def update_screen(self):
+        """Update images on the screen, and flip to the new screen"""
+        self.screen.blit(self.bg_image, self.bg_rect)
+        self.ship.blit_me()
 
+        # Make the most recently drawn screen visible.
+        pygame.display.flip()
+        
 if __name__ == '__main__':
     # Make a game instance, and run the game.
     ai = AlienInvasion()
