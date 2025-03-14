@@ -14,5 +14,17 @@ class Ship:
         # Set the position of the ship at the bottom center of screen
         self.rect.midbottom = self.screen_rect.midbottom
 
+        # Flags for moving right or left
+        self.moving_right = False
+        self.moving_left = False
+        self.settings = ai_game.settings
+
+    def update(self):
+        """Updates ship's position based on movment flags"""
+        if self.moving_right and self.rect.right < self.screen_rect.right:
+            self.rect.x += self.settings.ship_speed
+        elif self.moving_left and self.rect.left > 0:
+            self.rect.x += -self.settings.ship_speed
+
     def blit_me(self):
         self.screen.blit(self.image, self.rect)

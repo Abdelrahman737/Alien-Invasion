@@ -9,3 +9,4 @@ class Settings:
         self.width = 1200
         self.height = 800
         self.bg_image = pygame.image.load('images/space.bmp')
+        self.ship_speed = 3
