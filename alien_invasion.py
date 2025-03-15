@@ -20,13 +20,14 @@ class AlienInvasion:
         self.bg_rect = self.bg_image.get_rect()
         self.bg_rect.center = self.screen_rect.center
         self.bullets = pygame.sprite.Group()
+        self.last_bullet_time = 0
         pygame.display.set_caption("Alien Invasion")
 
     def run_game(self):
         """Start the main loop for the game."""
         while True:
             self.check_events()
-            self.bullets.update()
+            self.update_bullets()
             self.ship.update()
             self.update_screen()
             self.clock.tick(60)
@@ -59,9 +60,33 @@ class AlienInvasion:
         elif event.key == pygame.K_a:
             self.ship.moving_left = False
     
+    def check_cooldown(self):
+        """Checks the cooldown time of the bullet"""
+        # Gets the current time from the beginning of the game in milleseconds
+        current_time = pygame.time.get_ticks()
+
+        # Check if the we can shoot a new bullet or wait untill the cooldown time being reached
+        if current_time - self.last_bullet_time > self.settings.bullet_cooldown:
+            self.last_bullet_time = current_time
+            return True
+        return False
+
     def fire_bullet(self):
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        """Creat a new bullet object"""
+        if self.check_cooldown():
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+
+    def clear_old_bullets(self):
+        """Clear the old bullets after disappearing from the screen"""
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
+
+    def update_bullets(self):
+        """Update the possition of bullets and clears old ones"""
+        self.bullets.update()
+        self.clear_old_bullets()
 
     def update_screen(self):
         """Update images on the screen, and flip to the new screen"""

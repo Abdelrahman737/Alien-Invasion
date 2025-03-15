@@ -18,3 +18,4 @@ class Settings:
         self.bullet_width = 3
         self.bullet_height = 14
         self.bullet_color = (255, 100, 100)
+        self.bullet_cooldown = 500
