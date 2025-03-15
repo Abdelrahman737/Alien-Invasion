@@ -2,6 +2,7 @@ import sys
 import pygame
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior."""
@@ -18,12 +19,15 @@ class AlienInvasion:
         self.bg_image = self.settings.bg_image
         self.bg_rect = self.bg_image.get_rect()
         self.bg_rect.center = self.screen_rect.center
+        self.bullets = pygame.sprite.Group()
         pygame.display.set_caption("Alien Invasion")
 
     def run_game(self):
         """Start the main loop for the game."""
         while True:
             self.check_events()
+            self.bullets.update()
+            self.ship.update()
             self.update_screen()
             self.clock.tick(60)
     
@@ -33,20 +37,37 @@ class AlienInvasion:
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_d:
-                    self.ship.moving_right = True
-                elif event.key == pygame.K_a:
-                    self.ship.moving_left = True
+                self.check_keydown_events(event)
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_d:
-                    self.ship.moving_right = False
-                elif event.key == pygame.K_a:
-                    self.ship.moving_left = False
+                self.check_keyup_events(event)
     
+    def check_keydown_events(self, event):
+        """Responds to key presses"""
+        if event.key == pygame.K_d:
+            self.ship.moving_right = True
+        elif event.key == pygame.K_a:
+            self.ship.moving_left = True
+        elif event.key == pygame.K_SPACE:
+            self.fire_bullet()
+        elif event.key == pygame.K_q:
+            sys.exit()
+    
+    def check_keyup_events(self, event):
+        """Responds to key releases"""
+        if event.key == pygame.K_d:
+            self.ship.moving_right = False
+        elif event.key == pygame.K_a:
+            self.ship.moving_left = False
+    
+    def fire_bullet(self):
+        new_bullet = Bullet(self)
+        self.bullets.add(new_bullet)
+
     def update_screen(self):
         """Update images on the screen, and flip to the new screen"""
         self.screen.blit(self.bg_image, self.bg_rect)
-        self.ship.update()
+        for bullet in self.bullets:
+            bullet.draw_bullet()
         self.ship.blit_me()
 
         # Make the most recently drawn screen visible.
