@@ -19,3 +19,4 @@ class Settings:
         self.bullet_height = 14
         self.bullet_color = (255, 100, 100)
         self.bullet_cooldown = 500
+        self.bullet_sound = pygame.mixer.Sound('sounds/laser_sound.wav')

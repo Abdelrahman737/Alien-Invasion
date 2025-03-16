@@ -3,6 +3,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior."""
@@ -21,10 +22,14 @@ class AlienInvasion:
         self.bg_rect.center = self.screen_rect.center
         self.bullets = pygame.sprite.Group()
         self.last_bullet_time = 0
+
+        self.aliens = pygame.sprite.Group()
+        self.create_fleet()
+
         pygame.display.set_caption("Alien Invasion")
 
     def run_game(self):
-        """Start the main loop for the game."""
+        """Start the main loop for the game"""
         while True:
             self.check_events()
             self.update_bullets()
@@ -76,6 +81,7 @@ class AlienInvasion:
         if self.check_cooldown():
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
+            self.settings.bullet_sound.play()
 
     def clear_old_bullets(self):
         """Clear the old bullets after disappearing from the screen"""
@@ -88,12 +94,26 @@ class AlienInvasion:
         self.bullets.update()
         self.clear_old_bullets()
 
+    def create_fleet(self):
+        """Creates a fleet of aliens"""
+        alien = Alien(self)
+        alien_width = alien.rect.width
+        spacing = alien.spacing
+        current_x = spacing
+
+        while current_x < (self.settings.width - (spacing + alien_width)):
+            new_alien = Alien(self)
+            new_alien.rect.x = current_x
+            self.aliens.add(new_alien)
+            current_x += 30 + alien_width
+
     def update_screen(self):
         """Update images on the screen, and flip to the new screen"""
         self.screen.blit(self.bg_image, self.bg_rect)
         for bullet in self.bullets:
             bullet.draw_bullet()
         self.ship.blit_me()
+        self.aliens.draw(self.screen)
 
         # Make the most recently drawn screen visible.
         pygame.display.flip()
