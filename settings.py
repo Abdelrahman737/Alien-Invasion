@@ -20,3 +20,9 @@ class Settings:
         self.bullet_color = (255, 100, 100)
         self.bullet_cooldown = 500
         self.bullet_sound = pygame.mixer.Sound('sounds/laser_sound.wav')
+
+        # Alien settings
+        self.alien_speed = 1
+        self.fleet_drop_speed = 8
+        # 1 represents right, -1 represents left
+        self.fleet_direction = 1
